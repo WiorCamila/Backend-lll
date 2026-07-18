@@ -4,6 +4,8 @@ Este proyecto consiste en la refactorización integral de una aplicación Node.j
 
 --------------------------------------------------------------------------------------------------------------
 
+```
+
 src/
     ├── config/
     ├   └── env.config.js
@@ -30,6 +32,8 @@ src/
 ├── .gitignore
 ├── package.json
 ├── README.md
+
+```
 
 --------------------------------------------------------------------------------------------------------------
 ## 🛠️ Instrucciones para correr el proyecto localmente
