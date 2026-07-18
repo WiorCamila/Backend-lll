@@ -32,3 +32,19 @@ src/
 ├── README.md
 
 --------------------------------------------------------------------------------------------------------------
+## 🛠️ Instrucciones para correr el proyecto localmente
+
+Sigue estos pasos para configurar y levantar el servidor en tu entorno local:
+
+### 1. Clonar el repositorio
+git clone <LINK_DE_TU_REPOSITORIO_AQUÍ>
+
+### 2. Instalar las dependencias. 
+" npm install "
+
+### 3. Configurar las variables de entorno.
+PORT=3000
+MONGODB_URI=mongodb://127.0.0.1:27017/shipnow
+
+### 4. Iniciar el servidor
+" npm run dev "
