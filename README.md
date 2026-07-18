@@ -41,7 +41,7 @@ src/
 Sigue estos pasos para configurar y levantar el servidor en tu entorno local:
 
 ### 1. Clonar el repositorio
-git clone <LINK_DE_TU_REPOSITORIO_AQUÍ>
+git clone https://github.com/WiorCamila/Backend-lll
 
 ### 2. Instalar las dependencias. 
 " npm install "
