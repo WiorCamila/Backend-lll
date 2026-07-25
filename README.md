@@ -68,7 +68,7 @@ Se incorporó un módulo de mocking independiente que respeta la arquitectura en
 Permite generar registros al vuelo. Los datos no se persisten en MongoDB.
 - Ruta: GET /api/mocks/mockingdata
 
-# Query Params (Opcionales): 
+## Query Params: 
 - users: Cantidad de usuarios a generar (por defecto 5).
 - orders: Cantidad de pedidos a generar (por defecto 10).
 
