@@ -59,10 +59,9 @@ MONGODB_URI=mongodb://127.0.0.1:27017/shipnow
 ### 4. Iniciar el servidor
 " npm run dev "
 
-#### Módulo de Mocking y Carga de Datos (/api/mocks)
+## Módulo de Mocking y Carga de Datos (/api/mocks)
 Se incorporó un módulo de mocking independiente que respeta la arquitectura en capas y utiliza @faker-js/faker para simular entidades respetando las constantes de roles, estados y prioridades.
 
-### Endpoints disponibles:
 ## 1. Obtener datos simulados en memoria (Sin guardar en DB)
 
 Permite generar registros al vuelo. Los datos no se persisten en MongoDB.
