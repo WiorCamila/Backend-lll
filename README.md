@@ -1,37 +1,43 @@
-# 🚀 ShipNow - Backend Refactoring (Products & Users)
+# 📦 ShipNow API - Backend Refactoring & Mocking System
 
-Este proyecto consiste en la refactorización integral de una aplicación Node.js. Se aislaron por completo las responsabilidades de enrutamiento, lógica de negocio y acceso a datos para las entidades de **Products** y **Users**, garantizando además la seguridad mediante variables de entorno protegidas y constantes centralizadas.
+Este proyecto consiste en una API backend en Node.js desarrollada bajo una **arquitectura por capas** (Routes, Controllers, Services, Repositories/DAOs, Models). En esta etapa se aislaron las responsabilidades de las entidades del sistema, se integraron constantes centralizadas, variables de entorno y un **módulo completo de Mocking y Carga de Datos de prueba**.
 
---------------------------------------------------------------------------------------------------------------
+---
+
+## 📂 Estructura del Proyecto
 
 ```
-
 src/
-    ├── config/
-    ├   └── env.config.js
-    ├── constants/
-    │   └── index.js
-    ├── controllers/
-    │   ├── product.controller.js
-    │   └── user.controller.js
-    ├── models/
-    │   ├── product.model.js
-    │   └── user.model.js
-    ├── repositories/
-    │   ├── product.repository.js
-    │   └── user.repository.js
-    ├── routes/
-    │   ├── product.routes.js
-    │   └── user.routes.js
-    ├── services/
-    │   ├── product.service.js
-    │   └── user.service.js
-    ├── app.js
-    └── server.js
-├── .env
-├── .gitignore
-├── package.json
-├── README.md
+├── config/
+│   └── env.config.js
+├── constants/
+│   └── index.js
+├── controllers/
+│   ├── mock.controller.js     
+│   ├── product.controller.js
+│   └── user.controller.js
+├── models/
+│   ├── delivery.model.js
+│   ├── order.model.js
+│   ├── product.model.js
+│   └── user.model.js
+├── repositories/
+│   ├── delivery.repository.js
+│   ├── order.repository.js
+│   ├── product.repository.js
+│   └── user.repository.js
+├── routes/
+│   ├── mock.routes.js          
+│   ├── product.routes.js
+│   └── user.routes.js
+├── services/
+│   ├── mock.service.js          
+│   ├── product.service.js
+│   └── user.service.js
+├── utils/
+│   └── mock.util.js             
+├── app.js
+└── server.js
 
 ```
 
@@ -52,3 +58,35 @@ MONGODB_URI=mongodb://127.0.0.1:27017/shipnow
 
 ### 4. Iniciar el servidor
 " npm run dev "
+
+#### Módulo de Mocking y Carga de Datos (/api/mocks)
+Se incorporó un módulo de mocking independiente que respeta la arquitectura en capas y utiliza @faker-js/faker para simular entidades respetando las constantes de roles, estados y prioridades.
+
+### Endpoints disponibles:
+## 1. Obtener datos simulados en memoria (Sin guardar en DB)
+
+Permite generar registros al vuelo. Los datos no se persisten en MongoDB.
+- Ruta: GET /api/mocks/mockingdata
+
+# Query Params (Opcionales): 
+- users: Cantidad de usuarios a generar (por defecto 5).
+- orders: Cantidad de pedidos a generar (por defecto 10).
+
+Ejemplo: GET http://localhost:3000/api/mocks/mockingdata?users=10&orders=15
+
+## 2. Generar e insertar datos de prueba
+Genera registros de prueba e inserta en MongoDB respetando las relaciones entre entidades (Pedido ↔ Usuario, Entrega ↔ Pedido, Repartidor con rol coherente).
+
+- Ruta: POST /api/mocks/generateData
+
+Body = Raw (JSON) = Luego insertar como dice aqui abajo
+
+{
+  "usersCount": 5,
+  "ordersCount": 10
+}
+
+## Reglas y Relaciones del Sistema.
+- Usuarios y Repartidores: Centralizados mediante constantes para evitar magic strings (USER, DELIVERY, ADMIN).
+- Pedidos: Asignados a usuarios clientes existentes con estados y prioridades válidos.
+- Entregas: Vinculadas a pedidos y asignadas exclusivamente a usuarios con rol DELIVERY.
