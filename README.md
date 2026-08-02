@@ -77,14 +77,29 @@ Ejemplo: GET http://localhost:3000/api/mocks/mockingdata?users=10&orders=15
 
 Genera registros de prueba e inserta realmente en la base de datos MongoDB respetando las relaciones entre entidades y utilizando los repositorios del sistema.
 
-- **Ruta:** `POST /api/mocks/generateData`
-- **Headers:** `Content-Type: application/json`
-- **Body (JSON):**
+* **Ruta:** `POST /api/mocks/generateData`
+* **Headers:** `Content-Type: application/json`
+* **Body (JSON):**
 
 ```json
 {
   "usersCount": 5,
   "ordersCount": 10
+}
+
+- **Respuesta esperada (`201 Created`):**
+
+```json
+{
+  "status": "success",
+  "payload": {
+    "message": "Carga de datos simulados insertada con éxito en la base de datos",
+    "summary": {
+      "usersGenerated": 7,
+      "ordersGenerated": 10,
+      "deliveriesGenerated": 10
+    }
+  }
 }
 
 ## Reglas y Relaciones del Sistema.
