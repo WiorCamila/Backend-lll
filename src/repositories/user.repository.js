@@ -1,17 +1,17 @@
-import { UserModel } from "../models/user.model.js"
+import { UserModel } from '../models/user.model.js';
 
-class UserRepository {
+export class UserRepository {
+    async createMany(usersData) {
+        return await UserModel.insertMany(usersData);
+    }
+
     async getAll() {
-        return await UserModel.find()
+        return await UserModel.find();
     }
 
-    async create(userData) {
-        return await UserModel.create(userData)
-    }
-
-    async getByEmail(email) {
-        return await UserModel.findOne({ email })
+    async findAll() {
+        return await UserModel.find();
     }
 }
 
-export const userRepository = new UserRepository()
+export const userRepository = new UserRepository();

@@ -73,13 +73,15 @@ Permite generar registros al vuelo. Los datos no se persisten en MongoDB.
 
 Ejemplo: GET http://localhost:3000/api/mocks/mockingdata?users=10&orders=15
 
-## 2. Generar e insertar datos de prueba
-Genera registros de prueba e inserta en MongoDB respetando las relaciones entre entidades (Pedido ↔ Usuario, Entrega ↔ Pedido, Repartidor con rol coherente).
+## 2. Generar e insertar datos de prueba en MongoDB
 
-- Ruta: POST /api/mocks/generateData
+Genera registros de prueba e inserta realmente en la base de datos MongoDB respetando las relaciones entre entidades y utilizando los repositorios del sistema.
 
-Body = Raw (JSON) = Luego insertar como dice aqui abajo
+- **Ruta:** `POST /api/mocks/generateData`
+- **Headers:** `Content-Type: application/json`
+- **Body (JSON):**
 
+```json
 {
   "usersCount": 5,
   "ordersCount": 10

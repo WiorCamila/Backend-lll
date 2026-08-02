@@ -3,43 +3,54 @@ import {
     generateMockDeliveriesStaff, 
     generateMockOrders, 
     generateMockDeliveries 
-} from "../utils/mock.util.js"
+} from "../utils/mock.util.js";
 
-import { fakerES as faker } from '@faker-js/faker'
-
+import { userRepository } from "../repositories/user.repository.js";
+import { orderRepository } from "../repositories/order.repository.js";
+import { deliveryRepository } from "../repositories/delivery.repository.js";
 
 export class MockService {
+
     static async getMockData(numUsers = 5, numOrders = 10) {
         const users = generateMockUsers(numUsers);
         const deliveriesStaff = generateMockDeliveriesStaff(2);
         const orders = generateMockOrders([], numOrders);
-        
-        const fakeOrderIds = orders.map(() => faker.database.mongodbObjectId());
-        const deliveries = generateMockDeliveries(fakeOrderIds);
+        const deliveries = generateMockDeliveries(orders.map(o => o.user));
 
         return {
-        users,
-        deliveriesStaff,
-        orders,
-        deliveries
-        }
+            users,
+            deliveriesStaff,
+            orders,
+            deliveries
+        };
     }
 
-  // POST= Genera de prueba en MongoDB
     static async generateAndSaveData({ usersCount = 5, ordersCount = 10 }) {
-    // 1. Generar usuarios y repartidores simulados
-    const mockUsers = generateMockUsers(usersCount)
-    const mockStaff = generateMockDeliveriesStaff(2)
 
-    const allUsersToCreate = [...mockUsers, ...mockStaff]
+        const mockUsers = generateMockUsers(usersCount);
+        const mockStaff = generateMockDeliveriesStaff(2);
+        
+        const createdUsers = await userRepository.createMany(mockUsers);
+        const createdStaff = await userRepository.createMany(mockStaff);
 
-    return {
-        message: 'Carga de datos realizada con éxito',
-        summary: {
-            usersGenerated: allUsersToCreate.length,
-            ordersGenerated: ordersCount,
-            deliveriesGenerated: ordersCount
-        }
+        const userIds = createdUsers.map(u => u._id);
+        const staffIds = createdStaff.map(s => s._id);
+
+        const mockOrders = generateMockOrders(userIds, ordersCount);
+        const createdOrders = await orderRepository.createMany(mockOrders);
+
+        const orderIds = createdOrders.map(o => o._id);
+
+        const mockDeliveries = generateMockDeliveries(orderIds, staffIds);
+        const createdDeliveries = await deliveryRepository.createMany(mockDeliveries);
+
+        return {
+            message: 'Carga de datos realizada con éxito',
+            summary: {
+                usersGenerated: createdUsers.length + createdStaff.length,
+                ordersGenerated: createdOrders.length,
+                deliveriesGenerated: createdDeliveries.length
+            }
         };
     }
 }

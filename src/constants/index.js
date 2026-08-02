@@ -7,5 +7,19 @@ export const PRODUCT_STATUS = Object.freeze({
 export const USER_ROLES = Object.freeze({
     ADMIN: 'ADMIN',
     USER: 'USER',
-    PREMIUM: 'PREMIUM'
+    PREMIUM: 'PREMIUM',
+    DELIVERY: 'DELIVERY'
+});
+
+export const ORDER_STATUS = Object.freeze({
+    PENDING: 'PENDING',
+    IN_TRANSIT: 'IN_TRANSIT',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED'
+});
+
+export const ORDER_PRIORITIES = Object.freeze({
+    LOW: 'LOW',
+    MEDIUM: 'MEDIUM',
+    HIGH: 'HIGH'
 });
