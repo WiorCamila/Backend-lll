@@ -1,23 +1,23 @@
 import { userService } from "../services/user.service.js";
 
 class UserController {
-    async getUsers(req, res) {
+    async getUsers(req, res, next) {
         try {
-        const users = await userService.getUsers();
-        return res.status(200).json({ status: 'success', payload: users })
+            const users = await userService.getUsers();
+            return res.status(200).json({ status: 'success', payload: users });
         } catch (error) {
-        return res.status(500).json({ status: 'error', message: error.message })
+            next(error); // Pasa el error al middleware global
         }
     }
 
-    async createUser(req, res) {
+    async createUser(req, res, next) {
         try {
-        const newUser = await userService.registerUser(req.body)
-        return res.status(201).json({ status: 'success', payload: newUser })
+            const newUser = await userService.registerUser(req.body);
+            return res.status(201).json({ status: 'success', payload: newUser });
         } catch (error) {
-        return res.status(400).json({ status: 'error', message: error.message })
+            next(error); // Pasa el error al middleware global
         }
     }
 }
 
-export const userController = new UserController()
+export const userController = new UserController();

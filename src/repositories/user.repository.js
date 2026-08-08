@@ -8,10 +8,6 @@ export class UserRepository {
     async getAll() {
         return await UserModel.find();
     }
-
-    async findAll() {
-        return await UserModel.find();
-    }
 }
 
 export const userRepository = new UserRepository();

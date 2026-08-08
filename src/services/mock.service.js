@@ -1,56 +1,75 @@
-import { 
-    generateMockUsers, 
-    generateMockDeliveriesStaff, 
-    generateMockOrders, 
-    generateMockDeliveries 
-} from "../utils/mock.util.js";
+import { generateMockUsers, generateMockDeliveriesStaff, generateMockOrders, generateMockDeliveries } from "../utils/mock.util.js";
+import { fakerES as faker } from '@faker-js/faker';
+import { CustomError } from "../utils/custom.error.js";
+import { EErrors } from "../constants/error.constants.js";
+import { userRepository } from "../repositories/user.repository.js"; // O UserModel según tu proyecto
 
-import { userRepository } from "../repositories/user.repository.js";
-import { orderRepository } from "../repositories/order.repository.js";
-import { deliveryRepository } from "../repositories/delivery.repository.js";
+export const getMockDataService = (usersCount = 5, ordersCount = 10) => {
+    const numUsers = Number(usersCount);
+    const numOrders = Number(ordersCount);
 
-export class MockService {
-
-    static async getMockData(numUsers = 5, numOrders = 10) {
-        const users = generateMockUsers(numUsers);
-        const deliveriesStaff = generateMockDeliveriesStaff(2);
-        const orders = generateMockOrders([], numOrders);
-        const deliveries = generateMockDeliveries(orders.map(o => o.user));
-
-        return {
-            users,
-            deliveriesStaff,
-            orders,
-            deliveries
-        };
+    // Validaciones de dominio para el módulo de mocks
+    if (isNaN(numUsers) || isNaN(numOrders)) {
+        CustomError.createError({
+            name: "InvalidMockParamsError",
+            message: "Los parámetros de cantidad deben ser valores numéricos válidos.",
+            statusCode: EErrors.INVALID_TYPES_ERROR.code,
+            code: EErrors.INVALID_TYPES_ERROR.type,
+            cause: `Se recibió usersCount: ${usersCount}, ordersCount: ${ordersCount}`
+        });
     }
 
-    static async generateAndSaveData({ usersCount = 5, ordersCount = 10 }) {
+    if (numUsers < 0 || numOrders < 0) {
+        CustomError.createError({
+            name: "InvalidMockParamsError",
+            message: "Las cantidades para generar mocks no pueden ser valores negativos.",
+            statusCode: EErrors.INVALID_TYPES_ERROR.code,
+            code: EErrors.INVALID_TYPES_ERROR.type,
+            cause: `Se recibió usersCount: ${numUsers}, ordersCount: ${numOrders}`
+        });
+    }
 
-        const mockUsers = generateMockUsers(usersCount);
-        const mockStaff = generateMockDeliveriesStaff(2);
+    const users = generateMockUsers(numUsers);
+    const usersWithIds = users.map(u => ({ _id: faker.database.mongodbObjectId(), ...u }));
+
+    const deliveryStaff = generateMockDeliveriesStaff(3);
+    const staffWithIds = deliveryStaff.map(s => ({ _id: faker.database.mongodbObjectId(), ...s }));
+
+    const userIds = usersWithIds.map(u => u._id);
+    const orders = generateMockOrders(userIds, numOrders);
+    const ordersWithIds = orders.map(o => ({ _id: faker.database.mongodbObjectId(), ...o }));
+
+    const orderIds = ordersWithIds.map(o => o._id);
+    const deliveryStaffIds = staffWithIds.map(s => s._id);
+    const deliveries = generateMockDeliveries(orderIds, deliveryStaffIds);
+
+    return {
+        users: usersWithIds,
+        deliveryStaff: staffWithIds,
+        orders: ordersWithIds,
+        deliveries
+    };
+};
+
+export const generateAndSaveDataService = async ({ usersCount = 5, ordersCount = 10 }) => {
+    // Reutiliza la generación y validación
+    const mockData = getMockDataService(usersCount, ordersCount);
+
+    try {
+        // Inserción masiva en MongoDB
+        const insertedUsers = await userRepository.createMany(mockData.users);
         
-        const createdUsers = await userRepository.createMany(mockUsers);
-        const createdStaff = await userRepository.createMany(mockStaff);
-
-        const userIds = createdUsers.map(u => u._id);
-        const staffIds = createdStaff.map(s => s._id);
-
-        const mockOrders = generateMockOrders(userIds, ordersCount);
-        const createdOrders = await orderRepository.createMany(mockOrders);
-
-        const orderIds = createdOrders.map(o => o._id);
-
-        const mockDeliveries = generateMockDeliveries(orderIds, staffIds);
-        const createdDeliveries = await deliveryRepository.createMany(mockDeliveries);
-
         return {
-            message: 'Carga de datos realizada con éxito',
-            summary: {
-                usersGenerated: createdUsers.length + createdStaff.length,
-                ordersGenerated: createdOrders.length,
-                deliveriesGenerated: createdDeliveries.length
-            }
+            insertedUsersCount: insertedUsers.length,
+            users: insertedUsers
         };
+    } catch (error) {
+        CustomError.createError({
+            name: "DatabaseError",
+            message: "Error al guardar la información simulada en la base de datos.",
+            statusCode: EErrors.DATABASE_ERROR.code,
+            code: EErrors.DATABASE_ERROR.type,
+            cause: error.message
+        });
     }
-}
+};
