@@ -1,11 +1,11 @@
-import { productRepository } from "../repositories/product.repository.js";
-import { PRODUCT_STATUS } from "../constants/index.js";
-import { CustomError } from "../utils/custom.error.js";
-import { EErrors } from "../constants/error.constants.js";
+import { productRepository } from "../repositories/product.repository.js"
+import { PRODUCT_STATUS } from "../constants/index.js"
+import { CustomError } from "../utils/custom.error.js"
+import { EErrors } from "../constants/error.constants.js"
 
 class ProductService {
     async getAvailableProducts() {
-        const allProducts = await productRepository.getAll();
+        const allProducts = await productRepository.getAll()
         
         if (!allProducts) {
             CustomError.createError({
@@ -20,11 +20,9 @@ class ProductService {
     }
 
     async createProduct(productData) {
-        // Aceptamos name o title por si se envía alguno de los dos
         const name = productData.name || productData.title;
         const { price, stock } = productData;
 
-        // Validaciones de campos obligatorios
         if (!name || price === undefined || stock === undefined) {
             CustomError.createError({
                 name: "InvalidParamsError",
@@ -35,7 +33,6 @@ class ProductService {
             });
         }
 
-        // Validación de valores numéricos coherentes
         if (typeof price !== 'number' || typeof stock !== 'number' || price < 0 || stock < 0) {
             CustomError.createError({
                 name: "InvalidParamsError",
@@ -50,7 +47,6 @@ class ProductService {
             productData.status = PRODUCT_STATUS.OUT_OF_STOCK;
         }
 
-        // Aseguramos que se guarde el campo name que requiere Mongoose
         return await productRepository.create({
             ...productData,
             name

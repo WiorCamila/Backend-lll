@@ -4,11 +4,10 @@ export const errorHandler = (error, req, res, next) => {
     if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
         logger.warning(`[${error.name}] ${error.message} - Causa: ${error.cause || 'N/A'}`);
     } else {
-        // Errores 5xx o no controlados
+
         logger.error(`[${error.name || 'UnhandledError'}] ${error.message} - Stack: ${error.stack}`);
     }
 
-    // Respuesta al cliente (se mantiene igual)
     return res.status(error.statusCode || 500).json({
         status: 'error',
         error: {

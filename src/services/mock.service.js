@@ -2,13 +2,12 @@ import { generateMockUsers, generateMockDeliveriesStaff, generateMockOrders, gen
 import { fakerES as faker } from '@faker-js/faker';
 import { CustomError } from "../utils/custom.error.js";
 import { EErrors } from "../constants/error.constants.js";
-import { userRepository } from "../repositories/user.repository.js"; // O UserModel según tu proyecto
+import { userRepository } from "../repositories/user.repository.js"
 
 export const getMockDataService = (usersCount = 5, ordersCount = 10) => {
     const numUsers = Number(usersCount);
     const numOrders = Number(ordersCount);
 
-    // Validaciones de dominio para el módulo de mocks
     if (isNaN(numUsers) || isNaN(numOrders)) {
         CustomError.createError({
             name: "InvalidMockParamsError",
@@ -52,11 +51,9 @@ export const getMockDataService = (usersCount = 5, ordersCount = 10) => {
 };
 
 export const generateAndSaveDataService = async ({ usersCount = 5, ordersCount = 10 }) => {
-    // Reutiliza la generación y validación
     const mockData = getMockDataService(usersCount, ordersCount);
 
     try {
-        // Inserción masiva en MongoDB
         const insertedUsers = await userRepository.createMany(mockData.users);
         
         return {

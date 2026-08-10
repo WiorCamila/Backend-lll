@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
-        // 2. Usás logger.info para eventos exitosos
         logger.info('🌱 Conexión a MongoDB establecida');
         
         app.listen(PORT, () => {
@@ -14,7 +13,6 @@ mongoose.connect(process.env.MONGODB_URI)
         });
     })
     .catch((error) => {
-        // 3. Usás logger.fatal para fallas críticas de arranque
         logger.fatal(`❌ Falló la conexión inicial con MongoDB: ${error.message}`);
         process.exit(1);
     });
