@@ -1,23 +1,23 @@
-import { productService } from "../services/product.service.js"
+import { productService } from "../services/product.service.js";
 
 class ProductController {
-    async getProducts(req, res) {
+    async getProducts(req, res, next) {
         try {
-        const products = await productService.getAvailableProducts()
-        return res.status(200).json({ status: 'success', payload: products })
+            const products = await productService.getAvailableProducts();
+            return res.status(200).json({ status: 'success', payload: products });
         } catch (error) {
-        return res.status(500).json({ status: 'error', message: error.message })
+            next(error)
         }
     }
 
-    async createProduct(req, res) {
+    async createProduct(req, res, next) {
         try {
-        const newProduct = await productService.createProduct(req.body)
-        return res.status(201).json({ status: 'success', payload: newProduct })
+            const newProduct = await productService.createProduct(req.body);
+            return res.status(201).json({ status: 'success', payload: newProduct });
         } catch (error) {
-        return res.status(400).json({ status: 'error', message: error.message })
+            next(error)
         }
     }
 }
 
-export const productController = new ProductController()
+export const productController = new ProductController();

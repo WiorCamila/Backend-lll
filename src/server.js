@@ -1,18 +1,20 @@
-import app from "./app.js";
-import mongoose from "mongoose";
-import { envConfig } from "./config/env.config.js";
+import app from "./app.js"
+import mongoose from 'mongoose'
+import { logger } from "./utils/logger.js"
 
-const PORT = envConfig.PORT || 3000;
-const MONGO_URI = envConfig.MONGODB_URI;
+const PORT = process.env.PORT || 3000;
 
-mongoose.connect(MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
-        console.log('🌱 Conexión exitosa a MongoDB');
+        // 2. Usás logger.info para eventos exitosos
+        logger.info('🌱 Conexión a MongoDB establecida');
         
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+            logger.info(`🚀 Servidor escuchando en el puerto ${PORT}`);
         });
     })
     .catch((error) => {
-        console.error('❌ Error al conectar a MongoDB:', error.message);
+        // 3. Usás logger.fatal para fallas críticas de arranque
+        logger.fatal(`❌ Falló la conexión inicial con MongoDB: ${error.message}`);
+        process.exit(1);
     });

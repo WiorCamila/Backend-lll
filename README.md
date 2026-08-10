@@ -1,21 +1,44 @@
-# 🚀 ShipNow API - Pre-entrega 3
+## 🪵 Sistema de Logging y Monitoreo
 
-## ⚠️ Manejo Centralizado de Errores y Arquitectura por Capas
+El proyecto utiliza **Winston** en conjunto con el módulo **Winston Daily Rotate File** para la gestión centralizada, el formato y la persistencia de los registros del sistema.
 
-El proyecto implementa un manejo centralizado de errores utilizando errores personalizados (`CustomError`), un diccionario estandarizado de errores (`EErrors`) y un middleware global de captura (`errorHandler`).
+### 📊 Niveles de Log Configurados
+Se implementó un sistema personalizado de niveles de log ordenados por jerarquía y prioridad:
+0. **`fatal`**: Fallas críticas que impiden el funcionamiento del sistema o la conexión a la base de datos.
+1. **`error`**: Errores no controlados o fallas internas del servidor (HTTP 5xx).
+2. **`warning`**: Advertencias de negocio o errores en parámetros/peticiones (HTTP 4xx).
+3. **`info`**: Eventos informativos sobre el estado de la aplicación (inicio del servidor, conexión exitosa a MongoDB, acciones de entidades).
+4. **`http`**: Peticiones HTTP entrantes a la API.
+5. **`debug`**: Información detallada para tareas de depuración en desarrollo.
 
-### 🏗️ Arquitectura por Capas
+### 🌐 Comportamiento según el Entorno
+El nivel de detalle en consola se ajusta dinámicamente mediante la variable de entorno `NODE_ENV`:
+- **Desarrollo (`NODE_ENV=development`)**: Muestra logs desde el nivel `debug` hasta `fatal` formateados con colores en consola, e igual persiste los errores en archivos.
+- **Producción (`NODE_ENV=production`)**: Muestra logs desde el nivel `info` hasta `fatal` en consola sin formatos pesados de color, e igual persiste los errores en archivos.
 
-- **Capa de Servicios (`Service`)**: Concentra la lógica de negocio y las validaciones. Cuando una regla de negocio se viola, se invoca `CustomError.createError(...)`.
-- **Capa de Controladores (`Controller`)**: Recibe las peticiones HTTP, delega la ejecución al servicio dentro de un bloque `try/catch` y transfiere cualquier falla al pipeline global usando `next(error)`.
-- **Middleware Global (`errorHandler`)**: Intercepta los errores enviados vía `next(error)` y genera la respuesta HTTP correspondiente con formato estandarizado.
+### 📁 Almacenamiento y Rotación de Logs
+- Los registros de nivel **`error`** y **`fatal`** se persisten automáticamente dentro del directorio `/logs` en la raíz del proyecto.
+- Los archivos se generan bajo el formato `errors-YYYY-MM-DD.log` utilizando rotación diaria.
+- Se conserva un historial máximo de **14 días** (`maxFiles: '14d'`) antes de purgar archivos antiguos automáticamente.
 
+### 🙈 Archivos Ignorados en Git
+Para evitar subir datos sensibles o archivos generados en tiempo de ejecución al repositorio, el archivo `.gitignore` incluye:
+- `/logs` (directorio de logs)
+- `*.log` (cualquier archivo de extensión de logs)
+
+### 🧪 Endpoint de Prueba
+Se dispone de un endpoint dedicado para verificar la emisión de logs en todos sus niveles y la correcta escritura en archivo:
+
+```http
+GET /loggerTest
 ---
 
 ## 📂 Estructura del Proyecto
 
 ```
 
+├── logs/
+│   └── errors-2026-08-10.log
 ├── src/
 │   ├── config/
 │   │   └── env.config.js
@@ -48,11 +71,12 @@ El proyecto implementa un manejo centralizado de errores utilizando errores pers
 │   │   └── user.service.js
 │   ├── utils/
 │   │   ├── custom.error.js
+│   │   ├── logger.js
 │   │   └── mock.util.js
-│   ├── .env
-│   ├── .env.example
 │   ├── app.js
 │   └── server.js
+├── .env
+├── .env.example
 ├── .gitignore
 ├── package-lock.json
 ├── package.json
