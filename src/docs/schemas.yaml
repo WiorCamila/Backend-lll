@@ -1,0 +1,87 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d1"
+        first_name:
+          type: string
+          example: "Mariana"
+        last_name:
+          type: string
+          example: "Gonzalez"
+        email:
+          type: string
+          example: "marianaGonzalez@example.com"
+        role:
+          type: string
+          enum: [ADMIN, USER, PREMIUM, DELIVERY]
+          example: "USER"
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d2"
+        user:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d1"
+        status:
+          type: string
+          enum: [PENDING, IN_TRANSIT, DELIVERED, CANCELLED]
+          example: "PENDING"
+        priority:
+          type: string
+          enum: [LOW, MEDIUM, HIGH]
+          example: "MEDIUM"
+
+    Delivery:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d3"
+        order:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d2"
+        delivery_person:
+          type: string
+          example: "64f1a2b3c4d5e6f7a8b9c0d4"
+        status:
+          type: string
+          example: "ASSIGNED"
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        error:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "InvalidParamsError"
+            code:
+              type: string
+              example: "INVALID_TYPES_ERROR"
+            message:
+              type: string
+              example: "Los parámetros ingresados no son válidos."
+            cause:
+              type: string
+              example: "Se esperaban valores numéricos positivos."
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Operación realizada con éxito."

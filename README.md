@@ -1,36 +1,58 @@
+# 🚀 Backend ShipNow API
+
+API RESTful desarrollada para la gestión de envíos, usuarios, productos, pedidos y entregas en la plataforma ShipNow.
+
+---
+
+## 📚 Documentación Interactiva de la API (Swagger)
+
+El proyecto cuenta con documentación técnica interactiva e integrada utilizando **Swagger** y el estándar **OpenAPI 3.0**.
+
+### 🔗 Acceso a la Interfaz
+Para consultar y probar todos los endpoints disponibles en tiempo real:
+- **URL de Swagger UI**: `http://localhost:3000/api/docs/`
+
+### 🏷️ Módulos Documentados por Tags
+- **Users**: Consulta de usuarios registrados y sus roles dentro del sistema.
+- **Products**: Gestión y consulta del catálogo de productos.
+- **Orders**: Gestión y seguimiento de pedidos de envío.
+- **Deliveries**: Asignación y control de entregas.
+- **Mocks**: Generación de datos simulados en memoria y persistencia masiva en MongoDB utilizando `@faker-js/faker`.
+- **Logger**: Endpoint de diagnóstico para verificar la emisión de logs en sus distintos niveles.
+
+### 📐 Schemas Reutilizables
+Se incorporaron modelos estandarizados para las entidades y respuestas de la API:
+- `User`, `Order`, `Delivery`
+- `ErrorResponse`: Formato unificado para el retorno de errores.
+- `SuccessResponse`: Formato base para respuestas exitosas.
+
+---
+
 ## 🪵 Sistema de Logging y Monitoreo
 
-El proyecto utiliza **Winston** en conjunto con el módulo **Winston Daily Rotate File** para la gestión centralizada, el formato y la persistencia de los registros del sistema.
+El proyecto utiliza **Winston** en conjunto con **Winston Daily Rotate File** para la gestión centralizada, formato y rotación de registros.
 
 ### 📊 Niveles de Log Configurados
-Se implementó un sistema personalizado de niveles de log ordenados por jerarquía y prioridad:
 0. **`fatal`**: Fallas críticas que impiden el funcionamiento del sistema o la conexión a la base de datos.
 1. **`error`**: Errores no controlados o fallas internas del servidor (HTTP 5xx).
-2. **`warning`**: Advertencias de negocio o errores en parámetros/peticiones (HTTP 4xx).
-3. **`info`**: Eventos informativos sobre el estado de la aplicación (inicio del servidor, conexión exitosa a MongoDB, acciones de entidades).
+2. **`warning`**: Advertencias de negocio o parámetros incorrectos (HTTP 4xx).
+3. **`info`**: Eventos informativos sobre el estado de la aplicación.
 4. **`http`**: Peticiones HTTP entrantes a la API.
 5. **`debug`**: Información detallada para tareas de depuración en desarrollo.
 
 ### 🌐 Comportamiento según el Entorno
-El nivel de detalle en consola se ajusta dinámicamente mediante la variable de entorno `NODE_ENV`:
-- **Desarrollo (`NODE_ENV=development`)**: Muestra logs desde el nivel `debug` hasta `fatal` formateados con colores en consola, e igual persiste los errores en archivos.
-- **Producción (`NODE_ENV=production`)**: Muestra logs desde el nivel `info` hasta `fatal` en consola sin formatos pesados de color, e igual persiste los errores en archivos.
+- **Desarrollo (`NODE_ENV=development`)**: Muestra logs desde nivel `debug` hasta `fatal` con colores en consola y persiste errores en archivo.
+- **Producción (`NODE_ENV=production`)**: Muestra logs desde nivel `info` hasta `fatal` en consola sin colores pesados y persiste errores en archivo.
 
 ### 📁 Almacenamiento y Rotación de Logs
-- Los registros de nivel **`error`** y **`fatal`** se persisten automáticamente dentro del directorio `/logs` en la raíz del proyecto.
-- Los archivos se generan bajo el formato `errors-YYYY-MM-DD.log` utilizando rotación diaria.
-- Se conserva un historial máximo de **14 días** (`maxFiles: '14d'`) antes de purgar archivos antiguos automáticamente.
+- Los registros `error` y `fatal` se persisten en la carpeta `/logs`.
+- Archivos generados bajo el formato `errors-YYYY-MM-DD.log` con rotación diaria y retención máxima de **14 días**.
 
 ### 🙈 Archivos Ignorados en Git
-Para evitar subir datos sensibles o archivos generados en tiempo de ejecución al repositorio, el archivo `.gitignore` incluye:
+El archivo `.gitignore` incluye:
 - `/logs` (directorio de logs)
-- `*.log` (cualquier archivo de extensión de logs)
+- `*.log` (archivos de extensión log)
 
-### 🧪 Endpoint de Prueba
-Se dispone de un endpoint dedicado para verificar la emisión de logs en todos sus niveles y la correcta escritura en archivo:
-
-```http
-GET /loggerTest
 ---
 
 ## 📂 Estructura del Proyecto
@@ -38,10 +60,11 @@ GET /loggerTest
 ```
 
 ├── logs/
-│   └── errors-2026-08-10.log
+│   └── errors-YYYY-MM-DD.log
 ├── src/
 │   ├── config/
-│   │   └── env.config.js
+│   │   ├── env.config.js
+│   │   └── swagger.config.js
 │   ├── constants/
 │   │   ├── error.constants.js
 │   │   └── index.js
@@ -49,6 +72,10 @@ GET /loggerTest
 │   │   ├── mock.controller.js
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
+│   ├── docs/
+│   │   ├── mocks.yaml
+│   │   ├── routes.yaml
+│   │   └── schemas.yaml
 │   ├── middlewares/
 │   │   └── error.middleware.js
 │   ├── models/

@@ -1,0 +1,82 @@
+paths:
+  /api/users:
+    get:
+      summary: Obtener lista de usuarios
+      description: Devuelve todos los usuarios registrados en el sistema.
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/products:
+    get:
+      summary: Obtener catálogo de productos
+      description: Devuelve el listado completo de productos.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Listado de productos obtenido con éxito.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/orders:
+    get:
+      summary: Obtener pedidos de envío
+      description: Devuelve los pedidos registrados en el sistema.
+      tags:
+        - Orders
+      responses:
+        '200':
+          description: Lista de pedidos obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/deliveries:
+    get:
+      summary: Obtener entregas
+      description: Devuelve la lista de entregas y sus asignaciones.
+      tags:
+        - Deliveries
+      responses:
+        '200':
+          description: Lista de entregas obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Delivery'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

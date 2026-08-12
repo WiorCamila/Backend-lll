@@ -1,0 +1,72 @@
+paths:
+  /loggerTest:
+    get:
+      summary: Probar los niveles del logger
+      description: Endpoint de diagnóstico para verificar la emisión de logs en todos los niveles (debug a fatal) y la escritura en archivo.
+      tags:
+        - Logger
+      responses:
+        '200':
+          description: Logs ejecutados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/mocks/mockingdata:
+    get:
+      summary: Generar datos simulados en memoria
+      description: Genera usuarios y pedidos de prueba utilizando Faker sin guardar en la base de datos.
+      tags:
+        - Mocks
+      parameters:
+        - in: query
+          name: users
+          schema:
+            type: integer
+            default: 5
+          description: Cantidad de usuarios a generar.
+        - in: query
+          name: orders
+          schema:
+            type: integer
+            default: 10
+          description: Cantidad de pedidos a generar.
+      responses:
+        '200':
+          description: Datos simulados generados con éxito.
+        '400':
+          description: Parámetros numéricos inválidos o negativos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/mocks/generateData:
+    post:
+      summary: Generar e insertar datos simulados en MongoDB
+      description: Genera usuarios, pedidos y entregas e inserta los registros directamente en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usersCount:
+                  type: integer
+                  example: 5
+                ordersCount:
+                  type: integer
+                  example: 10
+      responses:
+        '201':
+          description: Datos insertados con éxito en la base de datos.
+        '400':
+          description: Cantidades inválidas o datos no numéricos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
