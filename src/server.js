@@ -1,6 +1,6 @@
-import app from "./app.js"
-import mongoose from 'mongoose'
-import { logger } from "./utils/logger.js"
+import app from "./app.js";
+import mongoose from 'mongoose';
+import { logger } from "./utils/logger.js";
 
 const PORT = process.env.PORT || 3000;
 

@@ -5,6 +5,8 @@ import { envConfig } from "./config/env.config.js";
 import productRouter from "./routes/product.routes.js";
 import userRouter from "./routes/user.routes.js";
 import mockRouter from "./routes/mock.routes.js";
+import orderRouter from "./routes/order.routes.js";
+import deliveryRouter from "./routes/delivery.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { addLogger } from "./utils/logger.js";
 
@@ -15,10 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(addLogger);
 
-
 app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpecs));
 app.get('/api/docs', (req, res) => res.redirect('/api/docs/'));
-
 
 app.get('/loggerTest', (req, res) => {
     req.logger.debug('Prueba de log nivel DEBUG');
@@ -34,10 +34,11 @@ app.get('/loggerTest', (req, res) => {
     });
 });
 
-
 app.use('/api/products', productRouter);
 app.use('/api/users', userRouter);
 app.use('/api/mocks', mockRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/deliveries', deliveryRouter);
 
 app.use(errorHandler);
 

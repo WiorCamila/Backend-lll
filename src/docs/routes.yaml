@@ -20,6 +20,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Crear un nuevo usuario
+      description: Registra un usuario en la base de datos.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: "Mariana Gonzalez"
+                first_name:
+                  type: string
+                  example: "Mariana"
+                last_name:
+                  type: string
+                  example: "Gonzalez"
+                email:
+                  type: string
+                  example: "gonzalesMariana@test.com"
+                password:
+                  type: string
+                  example: "123456password"
+                role:
+                  type: string
+                  example: "USER"
+      responses:
+        '201':
+          description: Usuario creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Faltan campos obligatorios o datos inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/products:
     get:
@@ -32,6 +79,47 @@ paths:
           description: Listado de productos obtenido con éxito.
         '500':
           description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Crear un nuevo producto
+      description: Agrega un nuevo producto al catálogo.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - price
+                - code
+                - stock
+              properties:
+                title:
+                  type: string
+                  example: "Paquete Estándar"
+                description:
+                  type: string
+                  example: "Caja mediana para envíos locales"
+                price:
+                  type: number
+                  example: 1500
+                code:
+                  type: string
+                  example: "PKG-001"
+                stock:
+                  type: integer
+                  example: 50
+      responses:
+        '201':
+          description: Producto creado exitosamente.
+        '400':
+          description: Parámetros inválidos o código duplicado.
           content:
             application/json:
               schema:
