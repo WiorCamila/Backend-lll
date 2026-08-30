@@ -4,9 +4,9 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        res.json({ status: 'success', payload: [] });
+        res.json({ status: 'success', payload: [] })
     } catch (error) {
-        next(error);
+        next(error)
     }
 });
 

@@ -1,46 +1,19 @@
+# ShipNow API - Backend Architecture & Management System
+
+API RESTful desarrollada en Node.js y Express para la gestión de envíos, órdenes, usuarios y autenticación del sistema **ShipNow**. Incluye mocking de datos, logging estructurado, documentación interactiva con Swagger UI, suite de tests automatizados y carga centralizada de documentos/comprobantes con Multer.
+
 ---
 
-## 🧪 Testing Funcional y Automatizado
+## 🛠️ Tecnologías Utilizadas
 
-El proyecto cuenta con una suite completa de pruebas funcionales automatizadas integradas, desarrolladas con **Mocha**, **Chai** y **Supertest**. 
-
-### 🛠️ Herramientas utilizadas
-* **Mocha:** Runner para la organización, estructura y ejecución de los casos de prueba.
-* **Chai:** Librería de aserciones para la validación de estructuras, valores y tipos (`expect`).
-* **Supertest:** Agente de peticiones HTTP para testing de controladores y endpoints de Express sin necesidad de levantar un servidor físico en red.
-
-### ⚙️ Entorno de Pruebas
-Las pruebas corren en un entorno aislado configurado en `./src/.env.test`.
-* **Modo:** `NODE_ENV=test`
-* **Base de datos:** Conexión a base de datos de pruebas dedicada (`shipnow_test`), garantizando aislamiento total.
-* **Limpieza automatizada:** Implementación de `beforeEach` para reiniciar colecciones antes de cada prueba y garantizar repetibilidad de los datos.
-
-### 📋 Módulos Cubiertos
-1. **Usuarios (`/api/users`):**
-   * Listado de usuarios (`GET 200 OK`).
-   * Creación exitosa de usuario (`POST 201/200`).
-   * Manejo de errores por envío de datos incompletos (`POST 400/500`).
-2. **Productos (`/api/products`):**
-   * Obtención del catálogo de productos (`GET 200 OK`).
-   * Creación de productos (`POST 201/200`).
-   * Error por faltantes en datos obligatorios (`POST 400/500`).
-3. **Pedidos y Entregas (`/api/orders` & `/api/deliveries`):**
-   * Listado de pedidos y entregas (`GET 200 OK`).
-   * Creación de pedido (`POST 200/201/400`).
-   * Error ante consulta con ID inexistente (`GET 400/404/500`).
-4. **Mocks, Logger y Documentación:**
-   * Módulo de generación de Mocks (`/api/mocks/mockingusers` y `/api/mocks/generateData`).
-   * Test del sistema de logs Winston (`/loggerTest`).
-   * Interfaz de documentación interactiva (`/api/docs/`).
-   * Manejo global de rutas inexistentes (`404 Not Found`).
-
-### 🚀 Cómo ejecutar los tests
-
-Para correr la suite completa de pruebas funcionales, ejecuta el siguiente comando en la terminal:
-
-```bash
-
-npm test
+- **Entorno de Ejecución:** Node.js (ES Modules)
+- **Framework Web:** Express.js
+- **Base de Datos:** MongoDB & Mongoose (ODM)
+- **Carga de Archivos:** Multer
+- **Mocking:** `@faker-js/faker`
+- **Logging & Monitoreo:** Winston
+- **Documentación API:** OpenAPI 3.0 & Swagger UI (`swagger-ui-express`, `yamljs`)
+- **Testing & Assertions:** Mocha, Chai, Supertest
 
 ---
 
@@ -48,6 +21,10 @@ npm test
 
 ```
 
+├── logs/                  
+├── uploads/                
+│   ├── documents/         
+│   └── receipts/           
 ├── src/
 │   ├── config/
 │   │   ├── env.config.js
@@ -64,7 +41,8 @@ npm test
 │   │   ├── routes.yaml
 │   │   └── schemas.yaml
 │   ├── middlewares/
-│   │   └── error.middleware.js
+│   │   ├── error.middleware.js
+│   │   └── uploader.middleware.js 
 │   ├── models/
 │   │   ├── delivery.model.js
 │   │   ├── order.model.js
@@ -97,7 +75,7 @@ npm test
 │   ├── .env.test
 │   ├── app.js
 │   └── server.js
-├── .gitignore
+├── .gitignore               
 ├── package-lock.json
 ├── package.json
 └── README.md
@@ -105,7 +83,7 @@ npm test
 ```
 
 --------------------------------------------------------------------------------------------------------------
-## 🛠️ Instrucciones para correr el proyecto localmente
+## ⚙️ Requisitos Previos e Instalación
 
 Sigue estos pasos para configurar y levantar el servidor en tu entorno local:
 
@@ -121,3 +99,29 @@ MONGODB_URI=mongodb://127.0.0.1:27017/shipnow
 
 ### 4. Iniciar el servidor
 " npm run dev "
+
+### 4. Modo produccion
+" npm start "
+
+## 🔌 Endpoints Destacados
+
+### 📁 Carga de Archivos (/api/users & /api/orders)
+POST /api/users/:uid/documents: Subida de documentación de usuario (multipart/form-data).
+- Campo del archivo: document
+- Campo adicional: docType (identification, address_proof, license, account_statement)
+
+POST /api/orders/:oid/receipt: Subida de comprobantes de pago o entrega (multipart/form-data).
+- Campo del archivo: receipt
+
+### 🧪 Mocking (/api/mocks)
+POST /api/mocks/generateData: Genera e inserta datos simulados en MongoDB utilizando @faker-js/faker.
+
+### 📊 Logging & Monitoreo (/loggerTest)
+GET /loggerTest: Verifica la emisión y rotación de registros del sistema en todos los niveles Winston (DEBUG, HTTP, INFO, WARNING, ERROR, FATAL).
+
+### 📚 Documentación Interactiva
+GET /api/docs/: UI interactiva de Swagger para explorar y probar todos los endpoints de la API.
+
+### 🧪 Pruebas Automatizadas
+Para ejecutar la suite de pruebas funcionales y de integración con Mocha, Chai y Supertest:
+" npm test "

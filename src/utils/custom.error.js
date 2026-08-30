@@ -8,7 +8,7 @@ export class CustomError extends Error {
     }
 
     static createError({ name = "CustomError", cause, message, statusCode = 500, code = "INTERNAL_SERVER_ERROR" }) {
-        const error = new CustomError({ name, cause, message, statusCode, code });
+        const error = new CustomError({ name, cause, message, statusCode, code })
         throw error;
     }
 }

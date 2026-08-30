@@ -1,19 +1,16 @@
-import { logger } from "../utils/logger.js"
+const errorHandler = (error, req, res, next) => {
+    req.logger?.error(`[${error.name || 'Error'}] ${error.message} - Stack: ${error.stack}`);
 
-export const errorHandler = (error, req, res, next) => {
-    if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
-        logger.warning(`[${error.name}] ${error.message} - Causa: ${error.cause || 'N/A'}`);
-    } else {
-
-        logger.error(`[${error.name || 'UnhandledError'}] ${error.message} - Stack: ${error.stack}`);
+    if (
+        error.name === 'InvalidParamsError' || 
+        error.name === 'ValidationError' ||
+        error.message?.includes('obligatorio')
+    ) {
+        return res.status(400).send({ status: 'error', error: error.message });
     }
 
-    return res.status(error.statusCode || 500).json({
-        status: 'error',
-        error: {
-            name: error.name || 'InternalServerError',
-            code: error.code || 'INTERNAL_SERVER_ERROR',
-            message: error.message || 'Ocurrió un error inesperado en el servidor.'
-        }
-    });
+    res.status(500).send({ status: 'error', error: error.message || 'Unhandled error' });
 };
+
+export { errorHandler };
+export default errorHandler;
