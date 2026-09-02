@@ -1,170 +1,50 @@
-paths:
-  /api/users:
-    get:
-      summary: Obtener lista de usuarios
-      description: Devuelve todos los usuarios registrados en el sistema.
-      tags:
-        - Users
-      responses:
-        '200':
-          description: Lista de usuarios obtenida exitosamente.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+/api/users/{uid}/documents:
     post:
-      summary: Crear un nuevo usuario
-      description: Registra un usuario en la base de datos.
+      summary: Subir un documento para el usuario
       tags:
         - Users
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID del usuario en MongoDB
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              required:
-                - name
-                - email
-                - password
               properties:
-                name:
+                document:
                   type: string
-                  example: "Mariana Gonzalez"
-                first_name:
+                  format: binary
+                  description: Archivo físico a subir
+                docType:
                   type: string
-                  example: "Mariana"
-                last_name:
-                  type: string
-                  example: "Gonzalez"
-                email:
-                  type: string
-                  example: "gonzalesMariana@test.com"
-                password:
-                  type: string
-                  example: "123456password"
-                role:
-                  type: string
-                  example: "USER"
-      responses:
-        '201':
-          description: Usuario creado exitosamente.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Faltan campos obligatorios o datos inválidos.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /api/products:
-    get:
-      summary: Obtener catálogo de productos
-      description: Devuelve el listado completo de productos.
-      tags:
-        - Products
-      responses:
-        '200':
-          description: Listado de productos obtenido con éxito.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    post:
-      summary: Crear un nuevo producto
-      description: Agrega un nuevo producto al catálogo.
-      tags:
-        - Products
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
+                  enum: [identification, address_proof, account_statement, license]
+                  description: Tipo de documento
               required:
-                - title
-                - price
-                - code
-                - stock
-              properties:
-                title:
-                  type: string
-                  example: "Paquete Estándar"
-                description:
-                  type: string
-                  example: "Caja mediana para envíos locales"
-                price:
-                  type: number
-                  example: 1500
-                code:
-                  type: string
-                  example: "PKG-001"
-                stock:
-                  type: integer
-                  example: 50
+                - document
+                - docType
       responses:
-        '201':
-          description: Producto creado exitosamente.
+        '200':
+          description: Documento subido correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Documento subido y metadatos registrados correctamente
+                  payload:
+                    $ref: '#/components/schemas/DocumentMetadata'
         '400':
-          description: Parámetros inválidos o código duplicado.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /api/orders:
-    get:
-      summary: Obtener pedidos de envío
-      description: Devuelve los pedidos registrados en el sistema.
-      tags:
-        - Orders
-      responses:
-        '200':
-          description: Lista de pedidos obtenida con éxito.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /api/deliveries:
-    get:
-      summary: Obtener entregas
-      description: Devuelve la lista de entregas y sus asignaciones.
-      tags:
-        - Deliveries
-      responses:
-        '200':
-          description: Lista de entregas obtenida con éxito.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Delivery'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Archivo faltante, tipo inválido o error de Multer
+        '404':
+          description: Usuario no encontrado

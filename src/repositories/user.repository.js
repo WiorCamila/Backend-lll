@@ -1,21 +1,29 @@
-import { UserModel } from '../models/user.model.js';
+import { UserModel } from '../models/user.model.js'
 
 export class UserRepository {
     async create(userData) {
-        return await UserModel.create(userData);
+        return await UserModel.create(userData)
     }
 
     async createMany(usersData) {
-        return await UserModel.insertMany(usersData);
+        return await UserModel.insertMany(usersData)
     }
 
     async getByEmail(email) {
-        return await UserModel.findOne({ email });
+        return await UserModel.findOne({ email })
     }
 
     async getAll() {
-        return await UserModel.find();
+        return await UserModel.find()
+    }
+
+    async getById(id) {
+        return await UserModel.findById(id)
+    }
+
+    async update(id, updateData) {
+        return await UserModel.findByIdAndUpdate(id, updateData, { returnDocument: 'after' })
     }
 }
 
-export const userRepository = new UserRepository();
+export const userRepository = new UserRepository()
