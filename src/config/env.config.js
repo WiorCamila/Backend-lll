@@ -1,17 +1,22 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 import path from 'path'
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-if (!process.env.PORT) process.env.PORT = '3000';
-if (!process.env.MONGODB_URI) process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/shipnow';
-if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development';
+const PORT = process.env.PORT || '3000';
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/shipnow'
 
-const requiredVariables = ['PORT', 'MONGODB_URI', 'NODE_ENV'];
+process.env.PORT = PORT;
+process.env.NODE_ENV = NODE_ENV;
+process.env.MONGODB_URI = MONGODB_URI;
+
+const requiredVariables = ['PORT', 'MONGODB_URI', 'NODE_ENV']
 
 for (const variable of requiredVariables) {
     if (!process.env[variable]) {
-        throw new Error(`❌ CONFIG ERROR: La variable de entorno '${variable}' es obligatoria en el archivo .env`);
+        console.error(`❌ CONFIG ERROR: La variable de entorno '${variable}' es obligatoria.`)
+        process.exit(1);
     }
 }
 

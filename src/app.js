@@ -1,14 +1,14 @@
-import express from "express";
-import swaggerUiExpress from "swagger-ui-express";
-import { swaggerSpecs } from "./config/swagger.config.js";
-import { envConfig } from "./config/env.config.js";
-import productRouter from "./routes/product.routes.js";
-import userRouter from "./routes/user.routes.js";
-import mockRouter from "./routes/mock.routes.js";
-import orderRouter from "./routes/order.routes.js";
-import deliveryRouter from "./routes/delivery.routes.js";
-import { errorHandler } from "./middlewares/error.middleware.js";
-import { addLogger } from "./utils/logger.js";
+import express from "express"
+import swaggerUiExpress from "swagger-ui-express"
+import { swaggerSpecs } from "./config/swagger.config.js"
+import { envConfig } from "./config/env.config.js"
+import productRouter from "./routes/product.routes.js"
+import userRouter from "./routes/user.routes.js"
+import mockRouter from "./routes/mock.routes.js"
+import orderRouter from "./routes/order.routes.js"
+import deliveryRouter from "./routes/delivery.routes.js"
+import { errorHandler } from "./middlewares/error.middleware.js"
+import { addLogger } from "./utils/logger.js"
 
 const app = express();
 
@@ -17,10 +17,29 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(addLogger);
 
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'UP',
+        environment: envConfig.NODE_ENV,
+        uptime: `${Math.floor(process.uptime())}s`,
+        timestamp: new Date().toISOString()
+    });
+});
+
 app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpecs));
 app.get('/api/docs', (req, res) => res.redirect('/api/docs/'));
 
-app.get('/loggerTest', (req, res) => {
+const restrictInProduction = (req, res, next) => {
+    if (envConfig.NODE_ENV === 'production') {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Endpoint deshabilitado en entorno de producción.'
+        });
+    }
+    next();
+};
+
+app.get('/loggerTest', restrictInProduction, (req, res) => {
     req.logger.debug('Prueba de log nivel DEBUG');
     req.logger.http('Prueba de log nivel HTTP');
     req.logger.info('Prueba de log nivel INFO');
@@ -34,9 +53,10 @@ app.get('/loggerTest', (req, res) => {
     });
 });
 
+app.use('/api/mocks', restrictInProduction, mockRouter);
+
 app.use('/api/products', productRouter);
 app.use('/api/users', userRouter);
-app.use('/api/mocks', mockRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/deliveries', deliveryRouter);
 

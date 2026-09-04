@@ -3,8 +3,11 @@ import { userService } from "../services/user.service.js"
 class UserController {
     async getUsers(req, res, next) {
         try {
-            const users = await userService.getUsers();
-            return res.status(200).json({ status: 'success', payload: users })
+            const limit = parseInt(req.query.limit) || 10;
+            const page = parseInt(req.query.page) || 1;
+
+            const users = await userService.getUsers({ limit, page });
+            return res.status(200).json({ status: 'success', payload: users });
         } catch (error) {
             next(error);
         }
@@ -12,8 +15,8 @@ class UserController {
 
     async createUser(req, res, next) {
         try {
-            const newUser = await userService.registerUser(req.body)
-            return res.status(201).json({ status: 'success', payload: newUser })
+            const newUser = await userService.registerUser(req.body);
+            return res.status(201).json({ status: 'success', payload: newUser });
         } catch (error) {
             next(error);
         }
@@ -26,12 +29,12 @@ class UserController {
             const file = req.file;
 
             if (!file) {
-                return res.status(400).json({ status: 'error', error: 'El archivo es obligatorio.' })
+                return res.status(400).json({ status: 'error', error: 'El archivo es obligatorio.' });
             }
 
             const validDocTypes = ['identification', 'address_proof', 'account_statement', 'license'];
             if (!docType || !validDocTypes.includes(docType)) {
-                return res.status(400).json({ status: 'error', error: 'Tipo de documento inválido o no proporcionado.' })
+                return res.status(400).json({ status: 'error', error: 'Tipo de documento inválido o no proporcionado.' });
             }
 
             const documentMetadata = {
@@ -48,10 +51,10 @@ class UserController {
             const updatedUser = await userService.addDocument(uid, documentMetadata);
             
             if (!updatedUser) {
-                return res.status(404).json({ status: 'error', error: 'Usuario no encontrado.' })
+                return res.status(404).json({ status: 'error', error: 'Usuario no encontrado.' });
             }
 
-            req.logger?.info(`Documento '${docType}' guardado en MongoDB para el usuario ${uid}`)
+            req.logger?.info(`Documento '${docType}' guardado en MongoDB para el usuario ${uid}`);
 
             return res.status(200).json({
                 status: 'success',
@@ -59,10 +62,10 @@ class UserController {
                 payload: documentMetadata
             });
         } catch (error) {
-            req.logger?.error(`Error en uploadDocument: ${error.message}`)
-            next(error)
+            req.logger?.error(`Error en uploadDocument: ${error.message}`);
+            next(error);
         }
     }
 }
 
-export const userController = new UserController()
+export const userController = new UserController();
