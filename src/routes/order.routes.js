@@ -1,13 +1,10 @@
 import { Router } from 'express';
+import { OrderController } from '../controllers/order.controller.js'
 
 const router = Router();
 
-router.get('/', async (req, res, next) => {
-    try {
-        res.json({ status: 'success', payload: [] })
-    } catch (error) {
-        next(error)
-    }
-});
+router.get('/', OrderController.getAll)
+router.get('/:oid', OrderController.getById)
+router.post('/', OrderController.create)
 
 export default router;

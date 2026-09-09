@@ -1,4 +1,6 @@
 import { userService } from "../services/user.service.js"
+import { CustomError } from "../utils/custom.error.js"
+import { EErrors } from "../constants/error.constants.js"
 
 class UserController {
     async getUsers(req, res, next) {
@@ -6,8 +8,8 @@ class UserController {
             const limit = parseInt(req.query.limit) || 10;
             const page = parseInt(req.query.page) || 1;
 
-            const users = await userService.getUsers({ limit, page });
-            return res.status(200).json({ status: 'success', payload: users });
+            const users = await userService.getUsers({ limit, page })
+            return res.status(200).json({ status: 'success', payload: users })
         } catch (error) {
             next(error);
         }
@@ -16,7 +18,7 @@ class UserController {
     async createUser(req, res, next) {
         try {
             const newUser = await userService.registerUser(req.body);
-            return res.status(201).json({ status: 'success', payload: newUser });
+            return res.status(201).json({ status: 'success', payload: newUser })
         } catch (error) {
             next(error);
         }
@@ -29,12 +31,22 @@ class UserController {
             const file = req.file;
 
             if (!file) {
-                return res.status(400).json({ status: 'error', error: 'El archivo es obligatorio.' });
+                CustomError.createError({
+                    name: "FileRequiredError",
+                    message: "El archivo es obligatorio.",
+                    statusCode: EErrors.INVALID_TYPES_ERROR.code,
+                    code: EErrors.INVALID_TYPES_ERROR.type
+                });
             }
 
             const validDocTypes = ['identification', 'address_proof', 'account_statement', 'license'];
             if (!docType || !validDocTypes.includes(docType)) {
-                return res.status(400).json({ status: 'error', error: 'Tipo de documento inválido o no proporcionado.' });
+                CustomError.createError({
+                    name: "InvalidDocTypeError",
+                    message: "Tipo de documento inválido o no proporcionado.",
+                    statusCode: EErrors.INVALID_TYPES_ERROR.code,
+                    code: EErrors.INVALID_TYPES_ERROR.type
+                });
             }
 
             const documentMetadata = {
@@ -49,12 +61,8 @@ class UserController {
             };
 
             const updatedUser = await userService.addDocument(uid, documentMetadata);
-            
-            if (!updatedUser) {
-                return res.status(404).json({ status: 'error', error: 'Usuario no encontrado.' });
-            }
 
-            req.logger?.info(`Documento '${docType}' guardado en MongoDB para el usuario ${uid}`);
+            req.logger?.info(`Documento '${docType}' guardado para el usuario ${uid}`);
 
             return res.status(200).json({
                 status: 'success',
@@ -68,4 +76,4 @@ class UserController {
     }
 }
 
-export const userController = new UserController();
+export const userController = new UserController()

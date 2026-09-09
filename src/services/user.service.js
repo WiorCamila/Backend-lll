@@ -3,7 +3,7 @@ import { CustomError } from "../utils/custom.error.js"
 import { EErrors } from "../constants/error.constants.js"
 
 class UserService {
-    async getUsers() {
+    async getUsers({ limit = 10, page = 1 } = {}) {
         const users = await userRepository.getAll()
         return users.map(user => {
             const { password, ...userWithoutPassword } = user.toObject()
@@ -44,8 +44,8 @@ class UserService {
             CustomError.createError({
                 name: "UserNotFoundError",
                 message: "El usuario especificado no existe.",
-                statusCode: 404,
-                code: EErrors.NOT_FOUND_ERROR?.type || 404
+                statusCode: EErrors.NOT_FOUND.code,
+                code: EErrors.NOT_FOUND.type
             });
         }
 

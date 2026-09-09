@@ -1,6 +1,6 @@
-import winston from 'winston';
-import 'winston-daily-rotate-file';
-import dotenv from 'dotenv';
+import winston from 'winston'
+import 'winston-daily-rotate-file'
+import dotenv from 'dotenv'
 
 dotenv.config();
 
@@ -39,14 +39,22 @@ const consoleFormat = winston.format.combine(
 );
 
 const errorRotateTransport = new winston.transports.DailyRotateFile({
-    filename: 'logs/errors-%DATE%.log',
+    filename: 'logs/error-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     level: 'error', 
     maxFiles: '14d',
     format: fileFormat
 });
 
-const ENVIRONMENT = process.env.NODE_ENV || 'development'
+const combinedRotateTransport = new winston.transports.DailyRotateFile({
+    filename: 'logs/combined-%DATE%.log',
+    datePattern: 'YYYY-MM-DD',
+    level: 'info',
+    maxFiles: '14d',
+    format: fileFormat
+});
+
+const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
 let transportsList = [];
 
@@ -56,7 +64,8 @@ if (ENVIRONMENT === 'production') {
             level: 'info',
             format: consoleFormat
         }),
-        errorRotateTransport
+        errorRotateTransport,
+        combinedRotateTransport
     ];
 } else {
     // Desarrollo
@@ -65,17 +74,18 @@ if (ENVIRONMENT === 'production') {
             level: 'debug',
             format: consoleFormat
         }),
-        errorRotateTransport
-    ]
+        errorRotateTransport,
+        combinedRotateTransport
+    ];
 }
 
 export const logger = winston.createLogger({
     levels: customLevelOptions.levels,
     transports: transportsList
-})
+});
 
 export const addLogger = (req, res, next) => {
     req.logger = logger;
-    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`);
+    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`)
     next();
-}
+};
