@@ -1,8 +1,6 @@
 import winston from 'winston'
 import 'winston-daily-rotate-file'
-import dotenv from 'dotenv'
-
-dotenv.config();
+import { envConfig } from '../config/env.config.js'
 
 const customLevelOptions = {
     levels: {
@@ -54,29 +52,18 @@ const combinedRotateTransport = new winston.transports.DailyRotateFile({
     format: fileFormat
 });
 
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
+const transportsList = [
+    errorRotateTransport,
+    combinedRotateTransport
+];
 
-let transportsList = [];
-
-if (ENVIRONMENT === 'production') {
-    transportsList = [
-        new winston.transports.Console({
-            level: 'info',
-            format: consoleFormat
-        }),
-        errorRotateTransport,
-        combinedRotateTransport
-    ];
-} else {
-    // Desarrollo
-    transportsList = [
+if (envConfig.NODE_ENV !== 'production') {
+    transportsList.push(
         new winston.transports.Console({
             level: 'debug',
             format: consoleFormat
-        }),
-        errorRotateTransport,
-        combinedRotateTransport
-    ];
+        })
+    );
 }
 
 export const logger = winston.createLogger({
@@ -86,6 +73,6 @@ export const logger = winston.createLogger({
 
 export const addLogger = (req, res, next) => {
     req.logger = logger;
-    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`)
+    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`);
     next();
 };

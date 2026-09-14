@@ -1,9 +1,9 @@
 export const EErrors = {
-    INVALID_TYPES_ERROR: 1,
-    DATABASE_ERROR: 2,
-    ROUTING_ERROR: 3,
-    FILE_UPLOAD_ERROR: 4,
-    NOT_FOUND_ERROR: 5
+    INVALID_TYPES_ERROR: { code: 400, type: 1 },
+    DATABASE_ERROR: { code: 500, type: 2 },
+    ROUTING_ERROR: { code: 404, type: 3 },
+    FILE_UPLOAD_ERROR: { code: 400, type: 4 },
+    NOT_FOUND: { code: 404, type: 5 }
 };
 
 export const ERROR_MESSAGES = {

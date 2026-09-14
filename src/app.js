@@ -29,31 +29,23 @@ app.get('/health', (req, res) => {
 app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpecs));
 app.get('/api/docs', (req, res) => res.redirect('/api/docs/'));
 
-const restrictInProduction = (req, res, next) => {
-    if (envConfig.NODE_ENV === 'production') {
-        return res.status(403).json({
-            status: 'error',
-            message: 'Endpoint deshabilitado en entorno de producción.'
+if (envConfig.NODE_ENV !== 'production') {
+    app.get('/loggerTest', (req, res) => {
+        req.logger.debug('Prueba de log nivel DEBUG');
+        req.logger.http('Prueba de log nivel HTTP');
+        req.logger.info('Prueba de log nivel INFO');
+        req.logger.warning('Prueba de log nivel WARNING');
+        req.logger.error('Prueba de log nivel ERROR');
+        req.logger.fatal('Prueba de log nivel FATAL');
+
+        res.json({ 
+            status: 'success', 
+            message: 'Logs ejecutados correctamente. Revisa la consola y la carpeta /logs.' 
         });
-    }
-    next();
-};
-
-app.get('/loggerTest', restrictInProduction, (req, res) => {
-    req.logger.debug('Prueba de log nivel DEBUG');
-    req.logger.http('Prueba de log nivel HTTP');
-    req.logger.info('Prueba de log nivel INFO');
-    req.logger.warning('Prueba de log nivel WARNING');
-    req.logger.error('Prueba de log nivel ERROR');
-    req.logger.fatal('Prueba de log nivel FATAL');
-
-    res.json({ 
-        status: 'success', 
-        message: 'Logs ejecutados correctamente. Revisa la consola y la carpeta /logs.' 
     });
-});
 
-app.use('/api/mocks', restrictInProduction, mockRouter);
+    app.use('/api/mocks', mockRouter);
+}
 
 app.use('/api/products', productRouter);
 app.use('/api/users', userRouter);
