@@ -1,28 +1,106 @@
-DocumentMetadata:
+components:
+  schemas:
+    User:
       type: object
       properties:
+        _id:
+          type: string
+          example: 660a871a5d8b6898b45c1c5a
+        first_name:
+          type: string
+          example: Camila
+        last_name:
+          type: string
+          example: Wior
+        email:
+          type: string
+          example: camila@example.com
+        role:
+          type: string
+          example: user
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: identification
+              reference:
+                type: string
+                example: /uploads/documents/id.pdf
+
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 660a871a5d8b6898b45c1c5d
         name:
           type: string
-          example: mi-dni.pdf
-        originalName:
-          type: string
-          example: mi-dni.pdf
-        filename:
-          type: string
-          example: document-1725301234567-890123456.pdf
-        reference:
-          type: string
-          example: uploads/documents/document-1725301234567-890123456.pdf
-        docType:
-          type: string
-          example: identification
-        mimetype:
-          type: string
-          example: application/pdf
-        size:
+          example: Caja de Envío Mediana
+        price:
+          type: number
+          example: 1500.50
+        stock:
           type: integer
-          example: 232925
-        uploadedAt:
+          example: 100
+        category:
           type: string
-          format: date-time
-          example: '2026-09-02T21:12:54.065Z'
+          example: empaque
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 660a871a5d8b6898b45c1c5e
+        user:
+          type: string
+          example: 660a871a5d8b6898b45c1c5a
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                example: 660a871a5d8b6898b45c1c5d
+              quantity:
+                type: integer
+                example: 2
+        totalPrice:
+          type: number
+          example: 3001.00
+
+    Delivery:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 660a871a5d8b6898b45c1c5b
+        order:
+          type: string
+          example: 660a871a5d8b6898b45c1c5e
+        address:
+          type: string
+          example: Av. Corrientes 1234
+        status:
+          type: string
+          example: pending
+        trackingCode:
+          type: string
+          example: SN-98765432
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        error:
+          type: string
+          example: NotFoundError
+        message:
+          type: string
+          example: El recurso solicitado no existe.

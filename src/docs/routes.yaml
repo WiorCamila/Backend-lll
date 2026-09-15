@@ -1,6 +1,29 @@
-/api/users/{uid}/documents:
+paths:
+  /api/users:
+    get:
+      summary: Obtiene la lista de usuarios
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
     post:
-      summary: Subir un documento para el usuario
+      summary: Registra un nuevo usuario
+      tags:
+        - Users
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+
+  /api/users/{uid}/documents:
+    post:
+      summary: Sube documentos de un usuario
       tags:
         - Users
       parameters:
@@ -9,42 +32,71 @@
           required: true
           schema:
             type: string
-          description: ID del usuario en MongoDB
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                document:
-                  type: string
-                  format: binary
-                  description: Archivo físico a subir
-                docType:
-                  type: string
-                  enum: [identification, address_proof, account_statement, license]
-                  description: Tipo de documento
-              required:
-                - document
-                - docType
+          description: ID del usuario
       responses:
         '200':
-          description: Documento subido correctamente
+          description: Documento subido exitosamente
+        '400':
+          description: Archivo no adjuntado
+
+  /api/products:
+    get:
+      summary: Obtiene el catálogo de productos
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Catálogo obtenido exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  message:
-                    type: string
-                    example: Documento subido y metadatos registrados correctamente
-                  payload:
-                    $ref: '#/components/schemas/DocumentMetadata'
-        '400':
-          description: Archivo faltante, tipo inválido o error de Multer
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Crea un nuevo producto
+      tags:
+        - Products
+      responses:
+        '201':
+          description: Producto creado exitosamente
+
+  /api/orders:
+    get:
+      summary: Obtiene la lista de órdenes
+      tags:
+        - Orders
+      responses:
+        '200':
+          description: Lista de órdenes obtenida exitosamente
+
+  /api/orders/{id}:
+    get:
+      summary: Obtiene una orden por su ID
+      tags:
+        - Orders
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de la orden
+      responses:
+        '200':
+          description: Orden encontrada
         '404':
-          description: Usuario no encontrado
+          description: Orden no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/deliveries:
+    get:
+      summary: Obtiene la lista de envíos/entregas
+      tags:
+        - Deliveries
+      responses:
+        '200':
+          description: Lista de entregas obtenida
