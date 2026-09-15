@@ -1,3 +1,4 @@
+Markdown
 # 🚀 ShipNow API - Backend Final Project (Coderhouse)
 
 RESTful API para la gestión de envíos, órdenes, productos y usuarios, desarrollada con arquitectura en capas, logging centralizado, pruebas automatizadas, documentación interactiva y contenedorización con Docker.
@@ -31,7 +32,7 @@ WiorCamila-Backend-lll/
 ├── logs/                
 ├── uploads/              
 │   ├── documents/       
-│   └── receipts/         
+│   └── receipts/        
 ├── src/
 │   ├── config/            
 │   ├── constants/        
@@ -55,7 +56,7 @@ WiorCamila-Backend-lll/
 ├── docker-compose.yml    
 ├── package-lock.json     
 ├── package.json          
-└── README.md             
+└── README.md
 
 ```
 
@@ -79,9 +80,11 @@ Opcion 1.
 
 Opcion 2. 
 Ejecución con Docker Compose (Recomendado)
-- Levantar el entorno de contenedores: " docker compose up --build " o " docker compose down
-docker compose up --build "
-- Detener los servicios: " docker compose down "
+# Levantar el entorno de contenedores
+- docker compose up --build
+
+# Detener los servicios
+- docker compose down
 
 ### 🧪 Pruebas Automatizadas
 Para ejecutar la suite completa de tests de integración con Mocha: " npm test "
